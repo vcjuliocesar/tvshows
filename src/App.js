@@ -7,9 +7,9 @@ import Spinner from './components/Spinner';
 import Axios from 'axios';
 
 function App() {
-  let showIniciales = JSON.parse(localStorage.getItem('shows'));
+  //let showIniciales = JSON.parse(localStorage.getItem('shows'));
   const [busqueda, setBusqueda] = useState('');
-  const [shows, setShows] = useState(showIniciales);
+  const [shows, setShows] = useState([]);
   const [cargando, setCargando] = useState(false);
 
 
@@ -31,7 +31,17 @@ function App() {
           setCargando(false);
           setShows(renderShows(resultado.data));
         }, 3000);
-      } else if (!localStorage.shows) {
+      }else{
+        const url = `https://api.tvmaze.com/shows`;
+        const resultado = await Axios.get(url);
+        //localStorage.shows = JSON.stringify(renderShows(resultado.data));
+        setCargando(true);
+        setTimeout(() => {
+          setCargando(false);
+          setShows(renderShows(resultado.data));
+        }, 3000);
+      } 
+      /*else if (!localStorage.shows) {
         const url = `https://api.tvmaze.com/shows`;
         const resultado = await Axios.get(url);
         localStorage.shows = JSON.stringify(renderShows(resultado.data));
@@ -42,7 +52,7 @@ function App() {
         }, 3000);
       } else {
         setShows(JSON.parse(localStorage.shows));
-      }
+      }*/
     }
     consultaApi();
   }, [busqueda]);
