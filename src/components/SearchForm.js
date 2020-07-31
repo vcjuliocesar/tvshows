@@ -1,45 +1,51 @@
-import React,{useState} from 'react';
+import React, { useState } from 'react';
 
-const SearchForm = () => {
-    
-    const[showname,setShowname]=useState({
-        name:''
+const SearchForm = ({setBusqueda}) => {
+
+    const [showname, setShowname] = useState({
+        name: ''
     });
 
-    const[error,setError] = useState(false);
-    const {name}=showname;
+    const [error, setError] = useState(false);
 
-    const onChangeInput = (e)=>{
+    const { name } = showname;
+
+    const onChangeInput = (e) => {
         setShowname({
             ...showname,
-            [e.target.name]:e.target.value
+            [e.target.name]: e.target.value
         });
     }
 
-    const onSubmitForm = (e) =>{
+    const onSubmitForm = (e) => {
         e.preventDefault();
 
-        if(name.trim() === ''){
+        if (name.trim() === '') {
             setError(true);
             return;
         }
-
         setError(false);
+        setBusqueda(name);
     }
-    
+
+    setTimeout(()=>{
+        setError(false);
+    },3000);
+
     return (
 
-        <form 
+        <form
             className="search-form"
             onSubmit={onSubmitForm}
         >
-            <input 
-                type="text" 
-                name='name' 
+            <input
+                type="text"
+                name='name'
                 value={name}
                 onChange={onChangeInput}
             />
-            <input type="submit" value="Buscar" />
+            <input type="submit" className="btn" value="Buscar" />
+            {error ? <p className="alet-error">Ingresa un término de búsqueda</p> : null}
         </form>
     );
 }
