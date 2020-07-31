@@ -6,14 +6,11 @@ import TvShows from './components/TvShows';
 import Axios from 'axios';
 
 function App() {
+  let showIniciales = JSON.parse(localStorage.getItem('shows'));
   const [busqueda, setBusqueda] = useState('');
-  const [shows, setShows] = useState([]);
+  const [shows, setShows] = useState(showIniciales);
 
-const getShows = (shows) =>{
-  return shows.map(el=>(
-    el.show
-  ));
-}
+
 const renderShows = (shows)=>{
    return shows.map(show=>(
       show.hasOwnProperty('show') ? show.show: show
@@ -23,14 +20,16 @@ const renderShows = (shows)=>{
   useEffect(() => {
 
     const consultaApi = async () => {
-      let url;
-      if (busqueda === ''){
-        url = `https://api.tvmaze.com/shows`;
-      }else{
-        url = `https://api.tvmaze.com/search/shows?q=${busqueda}`; 
-      }     
-      const resultado = await Axios.get(url);
-      setShows(renderShows(resultado.data));
+      if(!localStorage.shows && busqueda === ''){
+        const url = `https://api.tvmaze.com/shows`;
+        const resultado = await Axios.get(url);
+        localStorage.shows=JSON.stringify(renderShows(resultado.data));
+        setShows(renderShows(resultado.data));
+      }else if(busqueda !== ''){
+        const url = `https://api.tvmaze.com/search/shows?q=${busqueda}`;
+        const resultado = await Axios.get(url);
+        setShows(renderShows(resultado.data));
+      }
     }
     consultaApi();
   }, [busqueda]);
