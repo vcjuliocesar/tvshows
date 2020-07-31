@@ -4,7 +4,6 @@ const TvShows = ({shows}) => {
     
     return (
         <div className="tv-shows">
-            {/*<div class="loader">Loading...</div>*/}
            {shows.map(show=>(
                 <Show
                     key={show.id}

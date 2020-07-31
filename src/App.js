@@ -3,12 +3,14 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import SearchForm from './components/SearchForm';
 import TvShows from './components/TvShows';
+import Spinner from './components/Spinner';
 import Axios from 'axios';
 
 function App() {
   let showIniciales = JSON.parse(localStorage.getItem('shows'));
   const [busqueda, setBusqueda] = useState('');
   const [shows, setShows] = useState(showIniciales);
+  const [cargando,setCargando] = useState(false);
 
 
 const renderShows = (shows)=>{
@@ -20,20 +22,29 @@ const renderShows = (shows)=>{
   useEffect(() => {
 
     const consultaApi = async () => {
+      
       if(!localStorage.shows && busqueda === ''){
         const url = `https://api.tvmaze.com/shows`;
         const resultado = await Axios.get(url);
         localStorage.shows=JSON.stringify(renderShows(resultado.data));
-        setShows(renderShows(resultado.data));
+        setCargando(true);
+        setTimeout(() => {
+          setCargando(false);
+          setShows(renderShows(resultado.data));  
+        }, 3000);
       }else if(busqueda !== ''){
         const url = `https://api.tvmaze.com/search/shows?q=${busqueda}`;
         const resultado = await Axios.get(url);
-        setShows(renderShows(resultado.data));
+        setCargando(true);
+        setTimeout(() => {
+          setCargando(false);
+          setShows(renderShows(resultado.data));  
+        }, 3000);
       }
     }
     consultaApi();
   }, [busqueda]);
-
+  const componente = (cargando) ? <Spinner/> : <TvShows shows={shows}/>;
   return (
     <Fragment>
       <Header />
@@ -41,9 +52,7 @@ const renderShows = (shows)=>{
         <SearchForm
           setBusqueda={setBusqueda}
         />
-        <TvShows
-          shows={shows}
-        />
+       {componente}
       </section>
       <Footer />
     </Fragment>
